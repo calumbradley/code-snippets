@@ -17,7 +17,7 @@ brew install zsh-autosuggestions
 # Open .zshrc file
 
 ```bash
-nano ~/.zshrc
+code ~/.zshrc -r
 ```
 
 # Add the following line to load zsh-autosuggestions
