@@ -39,7 +39,7 @@ You can redirect the standard output (stdout) and standard error (stderr) to a f
 Example:
 
 ```bash
-command > /dev/null 2>&1 &
+command > output.log 2>&1 &
 ```
 
 ## If you want to discard the output completely, redirect it to /dev/null, which is a special file that discards all data written to it.
