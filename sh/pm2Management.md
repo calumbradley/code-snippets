@@ -1,12 +1,14 @@
 # Install PM2 globally using npm
 
-````bash
+```bash
 npm install -g pm2
 ```
+
 # Start an application with PM2
+
 ```bash
 pm2 start app.js
-````
+```
 
 # List all running PM2 processes
 
