@@ -63,3 +63,9 @@ pm2 status app_name_or_id
 ```bash
 pm2 reload all
 ```
+
+# Example PM2 Command to Start a Process with a Specific Command
+
+```bash
+pm2 start "node server.js" --name my-app
+```
