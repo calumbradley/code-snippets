@@ -32,7 +32,17 @@ disown %n
 jobs
 ```
 
-# If you want to discard the output completely, redirect it to /dev/null, which is a special file that discards all data written to it.
+# Redirect Output to a File
+
+You can redirect the standard output (stdout) and standard error (stderr) to a file when you start the process in the background.
+
+Example:
+
+```bash
+command > /dev/null 2>&1 &
+```
+
+## If you want to discard the output completely, redirect it to /dev/null, which is a special file that discards all data written to it.
 
 ```bash
 command > /dev/null 2>&1 &
