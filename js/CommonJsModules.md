@@ -2,7 +2,7 @@
 
 This file demonstrates various ways to use CommonJS imports and exports in Node.js.
 
-## 1. Basic Export and Import Example (`math.js`)
+## Basic Export and Import Example
 
 ```js
 // Exporting a function and a variable
