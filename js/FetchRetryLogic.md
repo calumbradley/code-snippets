@@ -1,15 +1,15 @@
-# Handling HTTP 413 Responses with Retry Logic in Node.js
+# Handling HTTP 413 Responses with Retry Logic in Node.js (with Success Marker)
 
 ### Overview:
 
-This JavaScript code demonstrates how to handle an HTTP `413 Payload Too Large` response when making a fetch request to a localhost endpoint (`http://localhost:8711`). The logic waits for 30 seconds after receiving a `413` response and retries the request. It uses `fetch()` for the HTTP request and promises for handling asynchronous operations.
+This JavaScript code demonstrates how to handle an HTTP `413 Payload Too Large` response when making a fetch request to a localhost endpoint (`http://localhost:8711`). If a `413` response is encountered, the logic waits for 30 seconds before retrying the request. The code uses a success marker (`true` or `false`) to indicate whether the fetch operation was successful.
 
 ### Step-by-Step Breakdown:
 
 ### 1. **The `fetchWithRetry()` Function**:
 
-- The `fetchWithRetry` function is defined to handle the fetch request and retry logic if necessary.
-- The `url` constant is set to store the URL of the local endpoint (`http://localhost:8711`).
+- The `fetchWithRetry` function handles the fetch request and retry logic if necessary.
+- The `url` constant stores the URL of the local endpoint (`http://localhost:8711`).
 
 ### 2. **First Fetch Request**:
 
@@ -18,16 +18,16 @@ This JavaScript code demonstrates how to handle an HTTP `413 Payload Too Large` 
 
 ### 3. **Check for `413 Payload Too Large` Response**:
 
-- The first `.then()` block checks if `response.status === 413`. This checks whether the server has responded with a `413 Payload Too Large` status, which typically indicates the request body is too large for the server to process.
+- The first `.then()` block checks if `response.status === 413`. This is to detect if the server responded with a `413 Payload Too Large` status, indicating that the request body is too large for the server to process.
 - If the response status is `413`, a message is logged (`Received 413 response, waiting 30 seconds before retrying...`).
 
 ### 4. **30-Second Wait Before Retry**:
 
-- The function creates a new `Promise` with a `setTimeout` call to introduce a 30-second delay before retrying the request. The promise resolves after the timeout.
+- The function creates a new `Promise` with a `setTimeout` call to introduce a 30-second delay before retrying the fetch request. The promise resolves after the timeout.
 
 ### 5. **Second Fetch Request (Retry)**:
 
-- After the 30-second wait, a second `fetch(url)` request is made to retry the request.
+- After the 30-second wait, a second `fetch(url)` request is made to retry the operation.
 - If the first request does not result in a `413` response, this retry logic is skipped.
 
 ### 6. **Handling a Successful Response**:
@@ -41,24 +41,31 @@ This JavaScript code demonstrates how to handle an HTTP `413 Payload Too Large` 
 
 ### 8. **Catch Block for Errors**:
 
-- If any error occurs during the fetch request (either due to a failed response or a network error), the `.catch()` block at the end of `fetchWithRetry()` logs the error (`Error during fetch operation`) and rethrows the error for further handling.
+- If any error occurs during the fetch request (either due to a failed response or a network error), the `.catch()` block at the end of `fetchWithRetry()` logs the error (`Error during fetch operation`) and returns `false` to indicate failure.
 
-### 9. **Calling the `fetchWithRetry()` Function**:
+### 9. **Returning a Success Marker (`true` or `false`)**:
+
+- If the fetch operation completes successfully, the code returns `true` as the success marker.
+- If an error occurs, `false` is returned as the success marker.
+
+### 10. **Calling the `fetchWithRetry()` Function**:
 
 - After defining the function, it is immediately called.
-- The `.then()` block following `fetchWithRetry()` processes the resolved data. If data is returned, it logs the final data. If no data is received, it logs `Failed to fetch data.`.
-- If any error propagates from the `fetchWithRetry()` call (due to a failed fetch or an error being thrown), it is caught by the `.catch()` block, which logs `Fetch operation failed` and the error message.
+- The `.then()` block checks the `successMarker`:
+  - If `true`, it logs `Fetch operation was successful: true`.
+  - If `false`, it logs `Fetch operation failed: false`.
+- Any unexpected error propagates to the `.catch()` block, which logs the error.
 
 ### Error Propagation and Control Flow:
 
 - If the first fetch results in a `413`, a 30-second delay is introduced, followed by a second attempt.
-- If the second attempt fails (due to a bad status or network error), the error is caught in the final `.catch()` block and logged.
-- If the first fetch is successful, no second request is made, and the data is processed immediately.
+- If the second attempt fails (due to a bad status or network error), the error is caught in the final `.catch()` block and logged as a failure (`false`).
+- If the first fetch is successful, no second request is made, and the data is processed immediately. The success marker `true` is returned.
 - Any non-`200` status or network failure will result in an error being thrown and will be caught by the outer `.catch()` blocks.
 
 ### Conclusion:
 
-This code retries an HTTP request if the response status is `413`, with a delay of 30 seconds. It handles errors and retries effectively, using promise chaining for asynchronous control flow and response management.
+This code retries an HTTP request if the response status is `413`, with a delay of 30 seconds. It handles errors and retries effectively, using promise chaining for asynchronous control flow. A success marker (`true` or `false`) is returned to indicate whether the fetch operation was successful or not.
 
 ### Code for Reference:
 
@@ -98,24 +105,24 @@ function fetchWithRetry() {
     })
     .then((data) => {
       console.log("Response data:", data);
-      return data;
+      return true; // Return true to indicate success
     })
     .catch((error) => {
       console.error("Error during fetch operation:", error);
-      throw error; // Re-throw the error if something goes wrong
+      return false; // Return false to indicate failure
     });
 }
 
 // Call the function to perform the fetch with retry logic
 fetchWithRetry()
-  .then((data) => {
-    if (data) {
-      console.log("Final data:", data);
+  .then((successMarker) => {
+    if (successMarker) {
+      console.log("Fetch operation was successful:", successMarker);
     } else {
-      console.log("Failed to fetch data.");
+      console.log("Fetch operation failed:", successMarker);
     }
   })
   .catch((err) => {
-    console.error("Fetch operation failed:", err);
+    console.error("Unexpected error:", err);
   });
 ```
