@@ -1,4 +1,4 @@
-## Example: Calculate the Difference Between a Date and Time, Handling Future Times
+## Example: Calculate the Difference Between a Date and Time with Days, Hours, and Minutes
 
 ```javascript
 function getTimeDifferenceFromDateTime(dateString, timeString) {
@@ -20,11 +20,22 @@ function getTimeDifferenceFromDateTime(dateString, timeString) {
   // Convert the difference to minutes
   const differenceInMinutes = Math.floor(differenceInMs / 1000 / 60);
 
-  return `${differenceInMinutes} minutes ago`;
+  // Calculate days, hours, and minutes
+  const daysAgo = Math.floor(differenceInMinutes / (60 * 24));
+  const hoursAgo = Math.floor((differenceInMinutes % (60 * 24)) / 60);
+  const minutesAgo = differenceInMinutes % 60;
+
+  if (daysAgo > 0) {
+    return `${daysAgo} day${daysAgo > 1 ? 's' : ''} ${hoursAgo} hour${hoursAgo !== 1 ? 's' : ''} ${minutesAgo} minute${minutesAgo !== 1 ? 's' : ''} ago`;
+  } else if (hoursAgo > 0) {
+    return `${hoursAgo} hour${hoursAgo > 1 ? 's' : ''} ${minutesAgo} minute${minutesAgo !== 1 ? 's' : ''} ago`;
+  } else {
+    return `${differenceInMinutes} minute${differenceInMinutes !== 1 ? 's' : ''} ago`;
+  }
 }
 
 // Example usage:
-const date = "2024-10-21"; // Example date
-const time = "10:52:35";   // Example time
+const date = "2024-10-19"; // Example date (two days ago)
+const time = "09:15:00";   // Example time
 const result = getTimeDifferenceFromDateTime(date, time);
 console.log(result); // Output will depend on the current time
